@@ -1,47 +1,57 @@
-<!doctype html><html><head><meta charset="utf-8"><title>Pocket Pal</title><meta name="theme-color" content="#2b2b3a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Pocket Friend</title>
+<meta name="theme-color" content="#f4d35e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pocket Friend">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
-  /* Layout: one egg-shaped handheld centred on a dark desk. Single look by design, so the toy reads the same in any theme. */
   :root{
-    --bg:#2b2b3a; --fg:#9a9ab0; --shell:#f4d35e; --bezel:#3a3a3a; --lcd:#c5d3a5; --link:#7aa2ff;
+    --bg:#f4d35e; --bezel:#3a3a3a; --lcd:#c5d3a5;
     --key:#17171a; --key-edge:#000; --key-shine:#4a4a52;
-    color-scheme:dark;
+    --cw:320px; --ch:190px; --bs:72px;   /* canvas width/height and button size, set by fit() below */
   }
   *{-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-  html,body{height:100%}
+  html,body{height:100%;margin:0}
   body{
-    background:var(--bg);color:var(--fg);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-    box-sizing:border-box;padding-block:16px;
-    padding-left:max(16px,env(safe-area-inset-left,0px));
-    padding-right:max(16px,env(safe-area-inset-right,0px));
-    font-family:system-ui,-apple-system,sans-serif;touch-action:manipulation;
+    height:100dvh;overflow:hidden;overscroll-behavior:none;
+    background:var(--bg);
+    display:grid;place-items:center;
+    font-family:system-ui,sans-serif;touch-action:manipulation;
   }
-  .shell{background:var(--shell);border-radius:40px 40px 52px 52px;padding:28px 22px 34px;
-         box-shadow:inset 0 -10px 0 rgba(0,0,0,.12),0 12px 30px rgba(0,0,0,.45);
-         display:flex;flex-direction:column;align-items:center;gap:16px;width:min(440px,94vw);box-sizing:border-box}
-  .bezel{background:var(--bezel);padding:12px;border-radius:12px;width:100%;box-sizing:border-box;box-shadow:inset 0 2px 6px #000}
-  canvas{width:100%;display:block;image-rendering:pixelated;background:var(--lcd);border-radius:4px;transition:filter .8s}
+  .device{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .bezel{background:var(--bezel);padding:6px;border-radius:12px;box-shadow:inset 0 2px 6px #000}
+  canvas{display:block;width:var(--cw);height:var(--ch);image-rendering:pixelated;
+         background:var(--lcd);border-radius:4px;transition:filter .8s}
   canvas.dim{filter:brightness(.55)}
-  /* three equal columns, so each button sits exactly under its icon on the screen */
-  .btns{display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;width:100%;box-sizing:border-box;padding:0 12px}
-  .btns button{width:46px;height:46px;border-radius:50%;border:0;padding:0;
+  /* four equal columns the same width as the screen, so each button sits under its icon */
+  .btns{display:grid;grid-template-columns:repeat(4,1fr);justify-items:center;width:var(--cw)}
+  .btns button{width:var(--bs);height:var(--bs);border-radius:50%;border:0;padding:0;
         background:radial-gradient(circle at 35% 30%,var(--key-shine),var(--key) 60%);
-        box-shadow:0 4px 0 var(--key-edge),0 6px 8px rgba(0,0,0,.35);cursor:pointer;touch-action:manipulation}
-  .btns button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--key-edge)}
-  .btns button:focus-visible{outline:3px solid #fff;outline-offset:3px}
-  .dev{font-size:12px;text-align:center;line-height:1.8}
-  .dev a{color:var(--link);margin:0 8px;cursor:pointer;text-decoration:underline}
+        box-shadow:0 5px 0 var(--key-edge),0 7px 10px rgba(0,0,0,.35);cursor:pointer;touch-action:manipulation}
+  .btns button:active{transform:translateY(4px);box-shadow:0 1px 0 var(--key-edge)}
+  .dev{position:fixed;left:0;right:0;bottom:4px;font-size:12px;text-align:center;line-height:1.8;color:#5a4a00}
+  .dev a{color:#1a3fa0;margin:0 8px;cursor:pointer;text-decoration:underline}
   .dev[hidden]{display:none}
 </style>
+</head>
+<body>
 
-<div class="shell">
+<main class="device">
   <div class="bezel"><canvas id="s"></canvas></div>
   <div class="btns">
     <button id="bFood" aria-label="Food"></button>
     <button id="bBath" aria-label="Bath"></button>
+    <button id="bBrush" aria-label="Brush teeth"></button>
     <button id="bBed"  aria-label="Bed"></button>
   </div>
-</div>
+</main>
 <div class="dev" hidden>
   <div id="stats"></div>
   <a id="skip">+1 hour</a><a id="skip4">+4 hours</a><a id="mute">sound: on</a><a id="reset">reset</a>
@@ -57,7 +67,12 @@ const CFG = {
   needThreshold: 45,   // below this the creature shows a gentle "I'd like..." icon
   eatBoost: 60,
   sleepMs: 8000,       // prototype nap length
-  maxOfflineHours: 24
+  maxOfflineHours: 24,
+  brushMs: 120000,     // tooth-brushing time: 2 minutes of actual brushing, which only counts while she taps
+                       // (the link ending in #dev makes it 10 seconds for testing)
+  tapCreditMs: 2500,   // each tap keeps the pet brushing for this long
+  tapCapMs: 5000,      // taps can't be saved up beyond this, so mashing can't finish the brushing early
+  brushQuitMs: 30000   // no taps for this long: the pet quietly puts the brush away
 };
 
 /* ---------- display ---------- */
@@ -71,6 +86,33 @@ function bmp(x,y,rows){ x=Math.round(x); y=Math.round(y);
   rows.forEach((r,j)=>{ for(let i=0;i<r.length;i++) if(r[i]==='#') px(x+i,y+j); }); }
 const SPR = {"creature_idle":["................................","................................","..###......................###..","..######................######..","...###..##............##..###...","....#.....#..........#.....#....",".....#.....##########.....#.....","......#..................#......",".......#................#.......","........#..............#........","..###....#............#.........","..#..#...#.##......##.#.........","..#...#.#..##......##..#........","..#....##......##......#........","..##....#.##........##.#........","....#...#.##...##...##.#........","...###..#....##..##....#........","...#.....#............#.........","....#...##............##........","...###..#..............#........","...#....#..............#........","....#..##..#..#..#..#..##.......","....#..#...#..#..#..#...#.......",".....#.#...#..#..#..#...#.......",".....###....##....##....#.......","......##................#.......","........##............###.......","........#.#.########.#.#........",".........###........###.........","................................","................................","................................"],"creature_blink":["................................","................................","..###......................###..","..######................######..","...###..##............##..###...","....#.....#..........#.....#....",".....#.....##########.....#.....","......#..................#......",".......#................#.......","........#..............#........","..###....#............#.........","..#..#...#............#.........","..#...#.#.###......###.#........","..#....##......##......#........","..##....#.##........##.#........","....#...#.##...##...##.#........","...###..#....##..##....#........","...#.....#............#.........","....#...##............##........","...###..#..............#........","...#....#..............#........","....#..##..#..#..#..#..##.......","....#..#...#..#..#..#...#.......",".....#.#...#..#..#..#...#.......",".....###....##....##....#.......","......##................#.......","........##............###.......","........#.#.########.#.#........",".........###........###.........","................................","................................","................................"],"creature_open":["................................","................................","..###......................###..","..######................######..","...###..##............##..###...","....#.....#..........#.....#....",".....#.....##########.....#.....","......#..................#......",".......#................#.......","........#..............#........","..###....#............#.........","..#..#...#.##......##.#.........","..#...#.#..##......##..#........","..#....##......##......#........","..##....#.##........##.#........","....#...#.##...##...##.#........","...###..#.....#..#.....#........","...#.....#....#..#....#.........","....#...##.....##.....##........","...###..#..............#........","...#....#..............#........","....#..##..#..#..#..#..##.......","....#..#...#..#..#..#...#.......",".....#.#...#..#..#..#...#.......",".....###....##....##....#.......","......##................#.......","........##............###.......","........#.#.########.#.#........",".........###........###.........","................................","................................","................................"],"creature_happy":["................................","................................","..###......................###..","..######................######..","...###..##............##..###...","....#.....#..........#.....#....",".....#.....#........#.....#.....","......#.....########.....#......",".......#................#.......","........#..............#........","..###....#..#......#..#.........","..#..#...#.#.#....#.#.#.........","..#...#.#..#.#....#.#..#........","..#....##......##......#........","..##....#.##........##.#........","....#...#.##...##...##.#........","...###..#....##..##....#........","...#.....#....#..#....#.........","....#...##.....##.....##........","...###..#..............#........","...#....#..#..#..#..#..#........","....#..##..#..#..#..#..##.......","....#..#...#..#..#..#...#.......",".....#.#....##....##....#.......",".....###................#.......","......##................#.......","........##............##........","........#.#.########.#.#........",".........###........###.........","................................","................................","................................"],"creature_sleep":["................................","................................","..###......................###..","..######................######..","...###..##............##..###...","....#.....#..........#.....#....",".....#.....##########.....#.....","......#..................#......",".......#................#.......","........#..............#........","..###....#.#.#....#.#.#.........","..#..#...#.#.#....#.#.#.........","..#...#.#...#......#...#........","..#....##......##......#........","..##....#.##........##.#........","....#...#.##...##...##.#........","...###..#....##..##....#........","...#.....#............#.........","....#...##............##........","...###..#..............#........","...#....#..............#........","....#..##..#..#..#..#..##.......","....#..#...#..#..#..#...#.......",".....#.#...#..#..#..#...#.......",".....###....##....##....#.......","......##................#.......","........##............###.......","........#.#.########.#.#........",".........###........###.........","................................","................................","................................"]};   // creature frames
 const ICON = {"apple":["....#..","..##...",".#..#..","#....#.","#....#.",".#...#.","..###.."],"drop":["...#...","...#...","..#.#..",".#...#.",".#...#.",".#...#.","..###.."],"moon":["..####.",".##....","##.....","##.....","##.....",".##..#.","..###.."],"heart":[".#.#.","#####","#####",".###.","..#.."],"ring":[".###.","#...#","#...#","#...#",".###."],"z":[".###.","...#.","..#..",".#...",".###."],"core":["...#.","..#..",".###.","..#..",".###."]};   // icons and effects
+/* extra sprites for tooth-brushing */
+ICON.tooth    = [".##.##.","#..#..#","#.....#","#.....#",".#...#.",".#.#.#.",".##.##."];   // small icon for the button strip
+ICON.brushBig = ["#.#.#.#........","###############","#######....####"];                    // the brush the pet holds: bristles, head, neck, handle
+ICON.foam     = [".#.","#.#",".#."];
+ICON.star     = ["..#..","..#..","#####","..#..","..#.."];
+
+/* ---------- fit the screen to the phone ----------
+   Works out the biggest screen that fits, using whole-number pixel scaling so the
+   pixel art stays crisp. Runs again whenever the phone is folded or unfolded. */
+function fit(){
+  const dpr = window.devicePixelRatio || 1;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const P = 12, B = 6, G = 14;                          // outer padding, bezel, gap
+  const R = Math.min(110, Math.max(56, vh*0.2));        // room kept for the buttons
+  const availW = vw - 2*P - 2*B;
+  const availH = vh - 2*P - 2*B - G - R;
+  const maxW = Math.max(W/dpr, Math.min(availW, availH*W/H));
+  const k = Math.max(1, Math.floor(maxW*dpr/W));        // whole-number scale
+  const cw = W*k/dpr, ch = H*k/dpr;
+  const r = document.documentElement.style;
+  r.setProperty('--cw', cw+'px');
+  r.setProperty('--ch', ch+'px');
+  r.setProperty('--bs', Math.max(44, Math.min(R, cw/4-8))+'px');
+}
+window.addEventListener('resize', fit);
+window.addEventListener('orientationchange', fit);
+fit();
 
 /* ---------- state ---------- */
 const KEY = 'pocketpal-v1';
@@ -111,7 +153,11 @@ const SND = {
   bath: ()=>tune([[784,.08],[988,.08],[1175,.08],[988,.08],[1319,.12]]),
   sleep:()=>tune([[523,.25],[440,.25],[349,.4]]),
   joy:  ()=>tune([[523,.08],[659,.08],[784,.08],[1047,.18]]),
-  wake: ()=>tune([[440,.1],[587,.15]])
+  wake: ()=>tune([[440,.1],[587,.15]]),
+  brush:()=>tune([[659,.08],[784,.08],[659,.08],[784,.12]]),
+  tick: ()=>tune([[988,.06],[0,.05],[988,.06]]),          // a chime every 30 seconds: time to move to the next part of the mouth
+  scrub:()=>beep(330+Math.random()*80, .04, 0),            // a tiny scritch for every tap
+  shine:()=>tune([[784,.1],[988,.1],[1175,.1],[1568,.3]])
 };
 
 /* ---------- creature ---------- */
@@ -126,9 +172,24 @@ function creature(cx, cy, eyes, mouth){
 }
 
 /* ---------- modes ---------- */
-let mode='idle', modeStart=0, x=0, tx=0, nextWander=0, blinkUntil=0, nextBlink=1500, lastSec=0;
-const DUR = {eat:2600, bath:3200, sleep:CFG.sleepMs, joy:1800};
-function setMode(m){ mode=m; modeStart=performance.now(); cv.classList.toggle('dim', m==='sleep'); }
+let mode='idle', modeStart=0, x=0, tx=0, nextWander=0, blinkUntil=0, nextBlink=1500, lastTick=Date.now();
+const DUR = {eat:2600, bath:3200, sleep:CFG.sleepMs, joy:1800, shine:2800};
+const brushMs = ()=> location.hash==='#dev' ? 10000 : CFG.brushMs;
+/* lastQ: which quarter of the brushing we're in; wake: keeps the screen on;
+   bprog: milliseconds of brushing done so far; credit: brushing time her taps have bought;
+   lastTap/tapFx: when she last tapped; lastF: time of the previous frame */
+let lastQ = 0, wake = null, bprog = 0, credit = 0, lastTap = 0, tapFx = -1e9, lastF = 0;
+async function keepAwake(on){
+  try{
+    if(on){
+      if('wakeLock' in navigator && !wake){
+        wake = await navigator.wakeLock.request('screen');
+        wake.addEventListener('release', ()=>{ wake=null; });
+      }
+    } else if(wake){ await wake.release(); wake=null; }
+  }catch(e){}
+}
+function setMode(m){ mode=m; modeStart=performance.now(); lastQ=0; bprog=0; credit=0; keepAwake(m==='brush'); cv.classList.toggle('dim', m==='sleep'); }
 function wakeFromSleep(early){
   const frac = Math.min(1,(performance.now()-modeStart)/CFG.sleepMs);
   S.energy = Math.min(100, S.energy + (100-S.energy)*(early?frac:1));
@@ -136,12 +197,21 @@ function wakeFromSleep(early){
 }
 function act(kind){
   if(mode==='sleep'){ wakeFromSleep(true); SND.wake(); setMode('idle'); return; }  // any press wakes her
+  if(mode==='shine') return;      // let the sparkly ending play out, even if she is still tapping
+  /* while brushing, each press of the brush button is one more scrub that keeps the pet going.
+     The other buttons are ignored, so mashing around the screen can't break it. */
+  if(mode==='brush'){
+    if(kind==='brush'){ credit = Math.min(CFG.tapCapMs, credit + CFG.tapCreditMs); lastTap = tapFx = performance.now(); SND.scrub(); }
+    return;
+  }
   if(kind==='eat'){ S.hunger=Math.min(100,S.hunger+CFG.eatBoost); SND.eat(); }
   if(kind==='bath'){ S.clean=100; SND.bath(); }
   if(kind==='sleep'){ SND.sleep(); }
+  if(kind==='brush'){ SND.brush(); save(); setMode('brush'); credit = CFG.tapCreditMs; lastTap = tapFx = performance.now(); return; }
   save(); setMode(kind);
 }
 function finish(){
+  if(mode==='brush'){ SND.shine(); setMode('shine'); return; }   // full two minutes done: sparkly teeth
   if(mode==='sleep'){ wakeFromSleep(false); SND.wake(); }
   if(mode==='eat'||mode==='bath'||mode==='sleep'){ SND.joy(); setMode('joy'); }
   else setMode('idle');
@@ -154,10 +224,20 @@ function lowest(){
 /* ---------- main loop ---------- */
 function frame(now){
   const dt = now - modeStart;
-  if(DUR[mode] && dt > DUR[mode]) finish();
+  const fdt = Math.min(100, now - lastF); lastF = now;      // time since the last frame (capped so a sleeping screen can't jump the timer)
+  if(mode==='brush'){
+    /* brushing only moves forward while she keeps tapping: each tap buys the pet a little brushing time */
+    if(credit > 0){ const use = Math.min(credit, fdt); credit -= use; bprog += use; }
+    if(bprog >= brushMs()) finish();
+    else if(now - lastTap > CFG.brushQuitMs) setMode('idle');   // she wandered off: put the brush away, no fuss
+  }
+  else if(DUR[mode] && dt > DUR[mode]) finish();
 
-  if(now - lastSec > 1000){            // slow-moving needs decay while open
-    decay(S, now-lastSec>5000?1000:now-lastSec, mode==='sleep'); lastSec=now; save(); updateStats();
+  /* Needs decay using the real clock, so time spent with the screen off or the app
+     in the background still counts when the pet comes back on screen. */
+  const wall = Date.now();
+  if(wall - lastTick >= 1000){
+    decay(S, wall - lastTick, mode==='sleep'); lastTick = wall; save(); updateStats();
   }
 
   g.fillStyle = PAPER; g.fillRect(0,0,W,H); g.fillStyle = INK;
@@ -198,7 +278,38 @@ function frame(now){
       bmp(cx-16+i*13, hy, ICON.heart);
     }
   }
-  /* corner gauges: food, bath, sleep, in the same order as the buttons.
+  else if(mode==='brush'){
+    const active = credit > 0;
+    const sway = Math.round(Math.sin(bprog/110)*3);       // brush wiggles while she taps, and holds still when she stops
+    if(active) creature(cx, baseY, 'open', 'open');
+    else creature(cx, baseY + (Math.floor(now/220)%2)*2, 'idle', 'smile');   // waiting: bounces gently to say "keep tapping!"
+    const bx = cx-4+sway;
+    g.fillStyle = PAPER; rect(bx-1, 41, 17, 5);           // clear a gap so the brush reads clearly
+    g.fillStyle = INK;   bmp(bx, 42, ICON.brushBig);
+    [[cx-10,46],[cx+8,47],[cx-4,50]].forEach(([fx,fy],i)=>{      // foam bubbles pop in and out
+      if(active && ((Math.floor(bprog/200)+i)%3!==0 || now-tapFx<150)) bmp(fx, fy, ICON.foam);   // a burst of foam on every tap
+    });
+    /* progress bar across the top, with a mark every 30 seconds */
+    const frac = Math.min(1, bprog/brushMs());
+    const bx0=4, by0=4, bw=96;
+    g.fillStyle = INK;   rect(bx0, by0, bw, 5);
+    g.fillStyle = PAPER; rect(bx0+1, by0+1, bw-2, 3);
+    g.fillStyle = INK;   rect(bx0+1, by0+1, Math.round((bw-2)*frac), 3);
+    for(let i=1;i<4;i++){
+      g.fillStyle = (frac*(bw-2) > i*bw/4) ? PAPER : INK;
+      rect(bx0+Math.round(i*bw/4), by0+1, 1, 3);
+    }
+    g.fillStyle = INK;
+    const q = Math.floor(frac*4);
+    if(q>lastQ && q<4){ lastQ=q; SND.tick(); }
+  }
+  else if(mode==='shine'){
+    creature(cx, baseY+bob, 'happy', 'smile');
+    [[-26,30],[22,28],[-16,18],[14,16]].forEach(([dx,dy],i)=>{      // twinkling stars
+      if((Math.floor(dt/220)+i)%2===0) bmp(cx+dx, dy, ICON.star);
+    });
+  }
+  /* corner gauges: food, bath, sleep (brushing has no gauge: it's just a nice thing to do).
      They never read empty, because needs bottom out at the floor. */
   [S.hunger,S.clean,S.energy].forEach((v,i)=>{
     const gx = W-15+i*5, gy = 3;
@@ -213,8 +324,9 @@ function frame(now){
      It lights up while that action runs, and blinks when that need is low. */
   g.fillStyle = INK; rect(0,63,W,1);
   const blink = Math.floor(now/500)%2===0;
-  [['apple',21,'eat'],['drop',64,'bath'],['moon',107,'sleep']].forEach(([ic,c,m])=>{
-    const on = mode===m || (mode==='idle' && need===ic && blink);
+  [['apple',16,'eat'],['drop',48,'bath'],['tooth',80,'brush'],['moon',112,'sleep']].forEach(([ic,c,m])=>{
+    /* the tooth button lights up while she's brushing, and flashes when the pet is waiting for more taps */
+    const on = (mode===m && !(m==='brush' && credit<=0 && !blink)) || (mode==='idle' && need===ic && blink);
     if(on){ g.fillStyle = INK; rect(c-6,65,13,11); g.fillStyle = PAPER; }
     else g.fillStyle = INK;
     bmp(c-3,67,ICON[ic]);
@@ -228,7 +340,7 @@ const $ = id=>document.getElementById(id);
 function updateStats(){
   $('stats').textContent = `food ${Math.round(S.hunger)} · clean ${Math.round(S.clean)} · energy ${Math.round(S.energy)}`;
 }
-[['bFood','eat'],['bBath','bath'],['bBed','sleep']].forEach(([id,k])=>{
+[['bFood','eat'],['bBath','bath'],['bBrush','brush'],['bBed','sleep']].forEach(([id,k])=>{
   $(id).addEventListener('pointerdown', e=>{ e.preventDefault(); act(k); });
 });
 $('skip').onclick  = ()=>{ decay(S,3.6e6,false); save(); updateStats(); };
@@ -239,12 +351,21 @@ $('reset').onclick = ()=>{ S=fresh(); save(); updateStats(); setMode('idle'); };
 function checkDev(){ $('stats').parentElement.hidden = location.hash !== '#dev'; }
 checkDev(); window.addEventListener('hashchange', checkDev);
 document.addEventListener('contextmenu', e=>e.preventDefault());
-/* iOS only unlocks audio on click/touchend, so prime it there */
+/* browsers only allow sound after a touch, so wake the audio up on the first one */
 function unlockAudio(){
   try{ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){}
 }
-['touchend','click'].forEach(ev=>document.addEventListener(ev, unlockAudio, {passive:true}));
-updateStats(); setMode('idle'); requestAnimationFrame(t=>{ lastSec=t; frame(t); });
+['pointerdown','touchend','click'].forEach(ev=>document.addEventListener(ev, unlockAudio, {passive:true}));
+/* save when the app is put away */
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); else if(mode==='brush') keepAwake(true); });
+
+/* offline support: lets the app open with no wifi */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+
+updateStats(); setMode('idle'); requestAnimationFrame(frame);
 </script>
 
-</body></html>
+</body>
+</html>
